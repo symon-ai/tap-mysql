@@ -118,6 +118,9 @@ def schema_for_column(c):
         result.type = ['null', 'string']
         result.format = 'date-time'
 
+    elif data_type == 'year':
+        result.type = ['null', 'number']
+
     else:
         result = Schema(None,
                         inclusion='unsupported',
