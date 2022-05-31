@@ -86,6 +86,8 @@ def schema_for_column(c):
 
     result = Schema(inclusion=inclusion)
 
+    LOGGER.info("datatype: " + str(data_type))
+
     if data_type == 'bit' or column_type.startswith('tinyint(1)'):
         result.type = ['null', 'boolean']
 
@@ -117,6 +119,9 @@ def schema_for_column(c):
     elif data_type in DATETIME_TYPES:
         result.type = ['null', 'string']
         result.format = 'date-time'
+
+    elif data_type == 'year':
+        result.type = ['null', 'number']
 
     else:
         result = Schema(None,
@@ -721,6 +726,7 @@ def main():
 
     mysql_conn = MySQLConnection(args.config)
     log_server_params(mysql_conn)
+    LOGGER.info("yihere")
 
     if args.discover:
         do_discover(mysql_conn, args.config)
