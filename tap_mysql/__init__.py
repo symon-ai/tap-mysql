@@ -86,8 +86,6 @@ def schema_for_column(c):
 
     result = Schema(inclusion=inclusion)
 
-    LOGGER.info("datatype: " + str(data_type))
-
     if data_type == 'bit' or column_type.startswith('tinyint(1)'):
         result.type = ['null', 'boolean']
 
