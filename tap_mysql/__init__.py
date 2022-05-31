@@ -119,7 +119,7 @@ def schema_for_column(c):
         result.format = 'date-time'
 
     elif data_type == 'year':
-        result.type = ['null', 'number']
+        result.type = ['null', 'string']
 
     else:
         result = Schema(None,
@@ -724,7 +724,6 @@ def main():
 
     mysql_conn = MySQLConnection(args.config)
     log_server_params(mysql_conn)
-    LOGGER.info("yihere")
 
     if args.discover:
         do_discover(mysql_conn, args.config)
