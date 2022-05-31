@@ -119,7 +119,7 @@ def schema_for_column(c):
         result.format = 'date-time'
 
     elif data_type == 'year':
-        result.type = ['null', 'string']
+        result.type = ['null', 'number']
 
     else:
         result = Schema(None,
