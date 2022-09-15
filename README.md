@@ -5,27 +5,21 @@
 
 [Singer](https://www.singer.io/) tap that extracts data from a [MySQL](https://www.mysql.com/) database and produces JSON-formatted data following the [Singer spec](https://github.com/singer-io/getting-started/blob/master/docs/SPEC.md).
 
-```bash
-$ mkvirtualenv -p python3 tap-mysql
-$ pip install tap-mysql
-$ tap-mysql --config config.json --discover
-$ tap-mysql --config config.json --properties properties.json --state state.json
-```
-
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Usage](#usage)
-  - [Installation](#installation)
-  - [Have a source database](#have-a-source-database)
-  - [Create the configuration file](#create-the-configuration-file)
-  - [Discovery mode](#discovery-mode)
-  - [Field selection](#field-selection)
-  - [Sync mode](#sync-mode)
-- [Replication methods and state file](#replication-methods-and-state-file)
-  - [Full Table](#full-table)
-  - [Incremental](#incremental)
-    - [Example](#example)
+- [tap-mysql](#tap-mysql)
+  - [Usage](#usage)
+    - [Install and Run](#install-and-run)
+    - [Have a source database](#have-a-source-database)
+    - [Create the configuration file](#create-the-configuration-file)
+    - [Discovery mode](#discovery-mode)
+    - [Field selection](#field-selection)
+    - [Sync mode](#sync-mode)
+  - [Replication methods and state file](#replication-methods-and-state-file)
+    - [Full Table](#full-table)
+    - [Incremental](#incremental)
+      - [Example](#example)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -35,20 +29,29 @@ This section dives into basic usage of `tap-mysql` by walking through extracting
 data from a table. It assumes that you can connect to and read from a MySQL
 database.
 
-### Install
+### Install and Run
 
-```bash
-$ mkvirtualenv -p python3 tap-mysql
-$ pip install tap-mysql
+Ensure poetry is installed on your machine. 
+
+- This command will return the installed version of poetry if it is installed.
+```
+poetry --version
 ```
 
-or
+- If not, install poetry using the following commands (from https://python-poetry.org/docs/#installation):
+```
+curl -sSL https://install.python-poetry.org | python3 -
+PATH=~/.local/bin:$PATH
+```
 
-```bash
-$ git clone git@github.com:singer-io/tap-mysql.git
-$ cd tap-mysql
-$ mkvirtualenv -p python3 tap-mysql
-$ python install .
+Within the `tap-mysql` directory, install dependencies:
+```
+poetry install
+```
+
+Then run the tap:
+```
+poetry run tap-mysql <options>
 ```
 
 ### Have a source database
