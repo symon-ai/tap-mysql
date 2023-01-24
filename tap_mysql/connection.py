@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import backoff
-import time
 
 import pymysql
 from pymysql.constants import CLIENT
