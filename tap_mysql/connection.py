@@ -10,7 +10,7 @@ import ssl
 
 LOGGER = singer.get_logger()
 
-CONNECT_TIMEOUT_SECONDS = 30
+CONNECT_TIMEOUT_SECONDS = 15
 READ_TIMEOUT_SECONDS = 3600
 
 # We need to hold onto this for self-signed SSL
@@ -18,7 +18,7 @@ match_hostname = ssl.match_hostname
 
 @backoff.on_exception(backoff.expo,
                       (pymysql.err.OperationalError),
-                      max_tries=5,
+                      max_tries=1,
                       factor=2)
 def connect_with_backoff(connection):
     connection.connect()
