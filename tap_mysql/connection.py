@@ -31,8 +31,10 @@ def connect_with_backoff(connection):
             raise SymonException('The username and password provided are incorrect. Please try again.', 'odbc.AuthenticationFailed')
         if 'nodename nor servname provided, or not known' in message:
             raise SymonException(f'The host "{connection.host}" was not found. Please check the host name and try again.', 'odbc.HostNotFound')
-        if 'timed out' in message:
-            raise SymonException('Timed out connecting to database. Please ensure all the form values are correct.', 'odbc.ConnectionTimeout')
+        if "Can't connect to MySQL server" in message:
+            if 'timed out' in message:
+                raise SymonException('Timed out connecting to database. Please ensure all the form values are correct.', 'odbc.ConnectionTimeout')
+            raise SymonException(f'Sorry, we couldn\'t connect to the host "{connection.host}". Please check the host name and try again.', 'odbc.InvalidHost')
         raise
     except pymysql.err.InternalError as e:
         message = str(e)
@@ -40,8 +42,6 @@ def connect_with_backoff(connection):
         # in the config. With wrong filter_dbs value, connection does not fail.
         if f"Unknown database" in message:
             raise SymonException(f'The database "{connection.db.decode()}" does not exist. Please ensure it is correct.', 'odbc.DatabaseDoesNotExist')
-        # if f"Host '{connection.host}' is blocked because of many connection errors" in message:
-        #     raise SymonException(f'')
         raise
         
 
