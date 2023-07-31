@@ -34,7 +34,7 @@ def connect_with_backoff(connection):
         if "Can't connect to MySQL server" in message:
             if 'timed out' in message:
                 raise SymonException('Timed out connecting to database. Please ensure all the form values are correct.', 'odbc.ConnectionTimeout')
-            raise SymonException(f'Sorry, we couldn\'t connect to the host "{connection.host}". Please check the host name and try again.', 'odbc.InvalidHost')
+            raise SymonException(f'Sorry, we couldn\'t connect to the host "{connection.host}". Please ensure all the form values are correct.', 'odbc.ConnectionFailed')
         raise
     except pymysql.err.InternalError as e:
         message = str(e)
