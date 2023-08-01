@@ -8,6 +8,8 @@ from pymysql.constants import CLIENT
 import singer
 import ssl
 
+from tap_mysql.symon_exception import SymonException
+
 LOGGER = singer.get_logger()
 
 CONNECT_TIMEOUT_SECONDS = 15
@@ -21,7 +23,26 @@ match_hostname = ssl.match_hostname
                       max_tries=1,
                       factor=2)
 def connect_with_backoff(connection):
-    connection.connect()
+    try:
+        connection.connect()
+    except pymysql.err.OperationalError as e:
+        message = str(e)
+        if 'Access denied for user' in message:
+            raise SymonException('The username and password provided are incorrect. Please try again.', 'odbc.AuthenticationFailed')
+        if "Can't connect to MySQL server" in message:
+            if 'nodename nor servname provided, or not known' in message or 'Name or service not known' in message:
+                raise SymonException(f'The host "{connection.host}" was not found. Please check the host name and try again.', 'odbc.HostNotFound')
+            if 'timed out' in message:
+                raise SymonException('Timed out connecting to database. Please ensure all the conenction form values are correct.', 'odbc.ConnectionTimeout')
+            raise SymonException(f'Sorry, we couldn\'t connect to the host "{connection.host}". Please ensure all the connection form values are correct.', 'odbc.ConnectionFailed')
+        raise
+    except pymysql.err.InternalError as e:
+        message = str(e)
+        # Symon mySql import does not pass in database in config, but only filter_dbs. Unknown database error occurs only if database is passed
+        # in the config. With wrong filter_dbs value, connection does not fail.
+        if f"Unknown database" in message:
+            raise SymonException(f'The database "{connection.db.decode()}" does not exist. Please ensure it is correct.', 'odbc.DatabaseDoesNotExist')
+        raise
 
     warnings = []
     with connection.cursor() as cur:

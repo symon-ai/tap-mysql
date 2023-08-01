@@ -8,6 +8,8 @@ from itertools import dropwhile
 import copy
 import os
 import pendulum
+import json
+import traceback
 
 import pymysql
 
@@ -27,6 +29,7 @@ import tap_mysql.sync_strategies.full_table as full_table
 import tap_mysql.sync_strategies.incremental as incremental
 
 from tap_mysql.connection import connect_with_backoff, MySQLConnection
+from tap_mysql.symon_exception import SymonException
 
 
 Column = collections.namedtuple('Column', [
@@ -259,6 +262,9 @@ def discover_catalog(mysql_conn, config):
                     schema=schema)
 
                 entries.append(entry)
+
+    if len(entries) == 0:
+        raise SymonException(f'Sorry, we couldn\'t find any table in the database "{filter_dbs_config}". Please check and try again.', 'odbc.TableNotFound')
 
     return Catalog(entries)
 
@@ -717,25 +723,58 @@ def log_server_params(mysql_conn):
 
 @utils.handle_top_exception(LOGGER)
 def main():
-    args = utils.parse_args(REQUIRED_CONFIG_KEYS)
+    try:
+        # used for storing error info to write if error occurs
+        error_info = None
+        args = utils.parse_args(REQUIRED_CONFIG_KEYS)
 
-    #NB> this code will only work correctly when the local time is set to UTC because of calls to the  timestamp() method.
-    os.environ['TZ'] = 'UTC'
+        #NB> this code will only work correctly when the local time is set to UTC because of calls to the  timestamp() method.
+        os.environ['TZ'] = 'UTC'
 
-    mysql_conn = MySQLConnection(args.config)
-    log_server_params(mysql_conn)
+        mysql_conn = MySQLConnection(args.config)
+        log_server_params(mysql_conn)
 
-    if args.discover:
-        do_discover(mysql_conn, args.config)
-    elif args.catalog:
-        state = args.state or {}
-        do_sync(mysql_conn, args.config, args.catalog, state)
-    elif args.properties:
-        catalog = Catalog.from_dict(args.properties)
-        state = args.state or {}
-        do_sync(mysql_conn, args.config, catalog, state)
-    else:
-        LOGGER.info("No properties were selected")
+        if args.discover:
+            do_discover(mysql_conn, args.config)
+        elif args.catalog:
+            state = args.state or {}
+            do_sync(mysql_conn, args.config, args.catalog, state)
+        elif args.properties:
+            catalog = Catalog.from_dict(args.properties)
+            state = args.state or {}
+            do_sync(mysql_conn, args.config, catalog, state)
+        else:
+            LOGGER.info("No properties were selected")
+    except SymonException as e:
+        error_info = {
+            'message': str(e),
+            'code': e.code,
+            'traceback': traceback.format_exc()
+        }
+
+        if e.details is not None:
+            error_info['details'] = e.details
+        raise
+    except BaseException as e:
+        error_info = {
+            'message': str(e),
+            'traceback': traceback.format_exc()
+        }
+        raise
+    finally:
+        if error_info is not None:
+            error_file_path = args.config.get('error_file_path', None)
+            if error_file_path is not None:
+                try:
+                    with open(error_file_path, 'w', encoding='utf-8') as fp:
+                        json.dump(error_info, fp)
+                except:
+                    pass
+            # log error info as well in case file is corrupted
+            error_info_json = json.dumps(error_info)
+            error_start_marker = args.config.get('error_start_marker', '[tap_error_start]')
+            error_end_marker = args.config.get('error_end_marker', '[tap_error_end]')
+            LOGGER.info(f'{error_start_marker}{error_info_json}{error_end_marker}')
 
 if __name__ == "__main__":
     main()
