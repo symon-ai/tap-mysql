@@ -33,8 +33,8 @@ def connect_with_backoff(connection):
             if 'nodename nor servname provided, or not known' in message or 'Name or service not known' in message:
                 raise SymonException(f'The host "{connection.host}" was not found. Please check the host name and try again.', 'odbc.HostNotFound')
             if 'timed out' in message:
-                raise SymonException('Timed out connecting to database. Please ensure all the form values are correct.', 'odbc.ConnectionTimeout')
-            raise SymonException(f'Sorry, we couldn\'t connect to the host "{connection.host}". Please ensure all the form values are correct.', 'odbc.ConnectionFailed')
+                raise SymonException('Timed out connecting to database. Please ensure all the conenction form values are correct.', 'odbc.ConnectionTimeout')
+            raise SymonException(f'Sorry, we couldn\'t connect to the host "{connection.host}". Please ensure all the connection form values are correct.', 'odbc.ConnectionFailed')
         raise
     except pymysql.err.InternalError as e:
         message = str(e)
