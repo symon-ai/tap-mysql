@@ -43,8 +43,6 @@ def connect_with_backoff(connection):
         if f"Unknown database" in message:
             raise SymonException(f'The database "{connection.db.decode()}" does not exist. Please ensure it is correct.', 'odbc.DatabaseDoesNotExist')
         raise
-        
-
 
     warnings = []
     with connection.cursor() as cur:
