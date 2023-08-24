@@ -142,19 +142,22 @@ def to_utc_datetime_str(val):
     else:
         raise ValueError("{!r} is not a valid date or time type".format(val))
 
-    if the_datetime.date() == datetime.date(1, 1, 1):
-        return the_datetime.isoformat() + ".000000Z"
+    try:
+        if the_datetime.tzinfo == None:
+            # The mysql-replication library creates naive date and datetime objects
+            # which will use the local timezone thus we must set tzinfo accordingly
+            # See: https://github.com/noplay/python-mysql-replication/blob/master/pymysqlreplication/row_event.py#L143-L145
 
-    if the_datetime.tzinfo == None:
-        # The mysql-replication library creates naive date and datetime objects
-        # which will use the local timezone thus we must set tzinfo accordingly
-        # See: https://github.com/noplay/python-mysql-replication/blob/master/pymysqlreplication/row_event.py#L143-L145
+            # NB> this code will only work correctly when the local time is set to UTC because of the method timestamp()
+            the_datetime = datetime.datetime.fromtimestamp(
+                the_datetime.timestamp(), pytz.timezone('UTC'))
 
-        # NB> this code will only work correctly when the local time is set to UTC because of the method timestamp()
-        the_datetime = datetime.datetime.fromtimestamp(
-            the_datetime.timestamp(), pytz.timezone('UTC'))
-
-    return utils.strftime(the_datetime.astimezone(tz=pytz.UTC))
+        return utils.strftime(the_datetime.astimezone(tz=pytz.UTC))
+    except ValueError:
+        # Dates/datetimes like 0001-01-01 fail with ValueError year 0 is out of range when timestamp()/astimezone() is called on them.
+        # Even if we return a date string like '0001-01-01T...', these dates very far in the past still end up being converted to null
+        # in our target, so just return None now
+        return None
 
 
 def row_to_singer_record(catalog_entry, version, row, columns, time_extracted):
