@@ -753,6 +753,7 @@ def main():
             'code': e.code,
             'traceback': "".join(traceback.format_tb(exc_traceback))
         }
+
         if e.details is not None:
             error_info['details'] = e.details
         raise
