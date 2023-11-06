@@ -28,7 +28,7 @@ def connect_with_backoff(connection):
     except pymysql.err.OperationalError as e:
         message = str(e)
         if 'Access denied for user' in message:
-            raise SymonException('The username and password provided are incorrect. Please try again.', 'odbc.AuthenticationFailed')
+            raise SymonException('The username or password provided is incorrect. Please check and try again.', 'odbc.AuthenticationFailed')
         if "Can't connect to MySQL server" in message:
             if 'nodename nor servname provided, or not known' in message or 'Name or service not known' in message:
                 raise SymonException(f'The host "{connection.host}" was not found. Please check the host name and try again.', 'odbc.HostNotFound')
