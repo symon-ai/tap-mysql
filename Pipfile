@@ -1,0 +1,32 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+attrs = "==16.3.0"
+backoff = "==1.8.0"
+backports-zoneinfo = "==0.2.1"
+cffi = "==1.16.0"
+ciso8601 = "==2.3.1"
+cryptography = "==42.0.8"
+jsonschema = "==2.6.0"
+mysql-replication = "==1.0.8"
+packaging = "==24.1"
+pendulum = "==1.2.0"
+pycparser = "==2.22"
+pymysql = "==1.1.1"
+python-dateutil = "==2.9.0.post0"
+pytz = "==2018.4"
+pytzdata = "==2020.1"
+simplejson = "==3.11.1"
+singer-python = "==5.9.0"
+six = "==1.16.0"
+tzdata = "==2024.1"
+tzlocal = "==5.2"
+
+[dev-packages]
+pylint = "*"
+
+[requires]
+python_version = "^3.8"
