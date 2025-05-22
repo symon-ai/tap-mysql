@@ -1,19 +1,19 @@
 [tool.poetry]
 name = "tap-mysql"
-version = "2.0.0"
+version = "2.1.0"
 description = "Singer.io tap for extracting data from MySQL"
 authors = ["Stitch"]
 classifiers = ['Programming Language :: Python :: 3 :: Only']
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "<3.9,>=3.8.0"
 attrs = "16.3.0"
 pendulum = "1.2.0"
 singer-python = "5.9.0"
 PyMySQL = "1.1.1"
 backoff = "1.8.0"
 mysql-replication = "^1.0"
-cryptography = "^42.0.0"
+cryptography = ">=44.0.1"
 
 [tool.poetry.dev-dependencies]
 pylint = "2.8.3"
