@@ -12,6 +12,7 @@ singer-python = "6.3.0"
 PyMySQL = "1.1.2"
 backoff = "2.2.1"
 mysql-replication = "^1.0"
+tzlocal = "^5.3.1"
 
 [tool.poetry.dev-dependencies]
 pylint = "2.8.3"

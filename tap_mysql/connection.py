@@ -15,9 +15,6 @@ LOGGER = singer.get_logger()
 CONNECT_TIMEOUT_SECONDS = 15
 READ_TIMEOUT_SECONDS = 3600
 
-# We need to hold onto this for self-signed SSL
-match_hostname = ssl.match_hostname
-
 @backoff.on_exception(backoff.expo,
                       (pymysql.err.OperationalError),
                       max_tries=1,
@@ -100,10 +97,9 @@ class MySQLConnection(pymysql.connections.Connection):
         # against a host that doesn't match the host we are connecting to. In the
         # case of Google Cloud, we will be connecting to an IP, not the hostname
         # the SSL certificate expects.
-        # The "ssl.match_hostname" function is patched to check against the
-        # internal hostname rather than the host of the connection. In the event
-        # that the connection fails, the patch is reverted by reassigning the
-        # patched out method to it's original spot.
+
+        # The "ssl.match_hostname" has been removed from ssl library
+        # we never use the internal_hostname option so I removed that too
 
         args = {
             "user": config["user"],
@@ -139,11 +135,6 @@ class MySQLConnection(pymysql.connections.Connection):
             if config.get("ssl_cert") and config.get("ssl_key"):
                 ssl_arg["cert"] = config["ssl_cert"]
                 ssl_arg["key"] = config["ssl_key"]
-
-            # override match hostname for google cloud
-            if config.get("internal_hostname"):
-                parsed_hostname = parse_internal_hostname(config["internal_hostname"])
-                ssl.match_hostname = lambda cert, hostname: match_hostname(cert, parsed_hostname)
 
         super().__init__(defer_connect=True, ssl=ssl_arg, **args)
 
