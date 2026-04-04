@@ -4,29 +4,22 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-attrs = "==16.3.0"
-backoff = "==1.8.0"
-backports-zoneinfo = "==0.2.1"
-cffi = "==1.16.0"
-ciso8601 = "==2.3.1"
-cryptography = "==44.0.1"
-jsonschema = "==2.6.0"
-mysql-replication = "==1.0.8"
-packaging = "==24.1"
-pendulum = "==1.2.0"
-pycparser = "==2.22"
-pymysql = "==1.1.1"
-python-dateutil = "==2.9.0.post0"
-pytz = "==2018.4"
-pytzdata = "==2020.1"
-simplejson = "==3.11.1"
-singer-python = "==5.9.0"
-six = "==1.16.0"
-tzdata = "==2024.1"
-tzlocal = "==5.2"
+backoff = {version = "==2.2.1", markers = "python_full_version >= \"3.13.0\" and python_version < \"4.0\""}
+ciso8601 = {version = "==2.3.3", markers = "python_full_version >= \"3.13.0\" and python_full_version < \"4.0.0\""}
+jsonschema = {version = "==2.6.0", markers = "python_full_version >= \"3.13.0\" and python_full_version < \"4.0.0\""}
+mysql-replication = {version = "==1.0.14", markers = "python_full_version >= \"3.13.0\" and python_full_version < \"4.0.0\""}
+packaging = {version = "==26.0", markers = "python_full_version >= \"3.13.0\" and python_full_version < \"4.0.0\""}
+pendulum = {version = "==3.1.0", markers = "python_full_version >= \"3.13.0\" and python_full_version < \"4.0.0\""}
+pymysql = {version = "==1.1.2", markers = "python_full_version >= \"3.13.0\" and python_full_version < \"4.0.0\""}
+python-dateutil = {version = "==2.9.0.post0", markers = "python_full_version >= \"3.13.0\" and python_full_version < \"4.0.0\""}
+pytz = {version = "==2025.2", markers = "python_full_version >= \"3.13.0\" and python_full_version < \"4.0.0\""}
+simplejson = {version = "==3.20.2", markers = "python_full_version >= \"3.13.0\" and python_full_version < \"4.0.0\""}
+singer-python = {version = "==6.3.0", markers = "python_full_version >= \"3.13.0\" and python_full_version < \"4.0.0\""}
+six = {version = "==1.17.0", markers = "python_full_version >= \"3.13.0\" and python_full_version < \"4.0.0\""}
+tzdata = {version = "==2025.3", markers = "python_full_version >= \"3.13.0\" and python_full_version < \"4.0.0\""}
 
 [dev-packages]
-pylint = "*"
 
 [requires]
-python_version = "^3.8"
+python_version = "3.13"
+python_full_version = "3.13.3"
