@@ -158,6 +158,7 @@ class MySQLConnection(pymysql.connections.Connection):
                 LOGGER.warn("Not verifying server certificate. The connection is encrypted, but the server hasn't been verified. Please provide a root CA certificate to enable verification.")
             self.ssl = True
             self.ctx = ssl.create_default_context()
+            self.ctx.minimum_version = ssl.TLSVersion.TLSv1_2
             check_hostname = config.get("check_hostname", "false") == 'true'
             self.ctx.check_hostname = check_hostname
             self.ctx.verify_mode = ssl.CERT_REQUIRED if verify_mode else ssl.CERT_NONE
