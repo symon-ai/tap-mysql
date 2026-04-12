@@ -162,6 +162,8 @@ class MySQLConnection(pymysql.connections.Connection):
             check_hostname = config.get("check_hostname", "false") == 'true'
             self.ctx.check_hostname = check_hostname
             self.ctx.verify_mode = ssl.CERT_REQUIRED if verify_mode else ssl.CERT_NONE
+            # CWE-757: Set minimum TLS version to 1.2 to prevent algorithm downgrade attacks
+            self.ctx.minimum_version = ssl.TLSVersion.TLSv1_2
             self.client_flag |= CLIENT.SSL
 
 
