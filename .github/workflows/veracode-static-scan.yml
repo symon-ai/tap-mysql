@@ -30,4 +30,3 @@ jobs:
           vkey: ${{ secrets.VERACODE_API_KEY_SECRET }}
           scantimeout: 120
           criticality: High
-          exclude: "tests/*,*/test_*,*tests/*"
