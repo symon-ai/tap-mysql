@@ -16,7 +16,7 @@ jobs:
       - name: Zip
         uses: montudor/action-zip@v1
         with:
-          args: zip -qq -r ELT_tap-mysql.zip .
+          args: zip -qq -r ELT_tap-mysql.zip . -x "tests/*" "*/test_*" "*tests/*"
       - name: Get timestamp
         run: echo TIMESTAMP=$(date +%Y-%m-%d_%H:%M:%S) >> $GITHUB_ENV
       - name: Veracode Upload And Scan
@@ -30,3 +30,4 @@ jobs:
           vkey: ${{ secrets.VERACODE_API_KEY_SECRET }}
           scantimeout: 120
           criticality: High
+          exclude: "tests/*,*/test_*,*tests/*"
